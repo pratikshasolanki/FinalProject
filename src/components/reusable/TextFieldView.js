@@ -52,6 +52,7 @@ export default class TextFieldView extends Component {
       Animated.timing(this.position, {
         toValue: 1,
         duration: 150,
+        useNativeDriver: false,
       }).start();
     } else {
       this.props.onFocus();
@@ -64,6 +65,7 @@ export default class TextFieldView extends Component {
       Animated.timing(this.position, {
         toValue: 0,
         duration: 150,
+        useNativeDriver: false,
       }).start();
     } else {
       this.props.onBlur();
@@ -75,6 +77,7 @@ export default class TextFieldView extends Component {
     Animated.timing(this.position, {
       toValue: 0,
       duration: 150,
+      useNativeDriver: false,
     }).start();
   }
 

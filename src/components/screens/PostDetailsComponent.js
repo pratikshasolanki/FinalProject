@@ -7,6 +7,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import TextFieldView from '../reusable/TextFieldView';
 import * as PostsActions from '../../actions/PostsActions';
+import {EventEmitter} from './../../common/EventEmitter';
 
 export class PostDetailsComponent extends Component {
   constructor(props) {
@@ -76,13 +77,11 @@ export class PostDetailsComponent extends Component {
     if (this.props.postUpdateError) {
       Alert.alert('Error in post update.');
     } else {
-      await this.props.fetchPostsList(this.state.postObject.userId);
       this.props.navigation.navigate('PostListComponent');
     }
   }
 
   onEdit() {
-    console.log('text --> ', this.state.buttonText);
     if (this.state.buttonText === 'Edit') {
       this.setState(
         {
@@ -96,7 +95,6 @@ export class PostDetailsComponent extends Component {
     }
   }
   async onDelete() {
-    console.log('test');
     await this.props.onDeletePost(
       this.state.postObject.userId,
       this.state.postObject.id,
@@ -104,7 +102,7 @@ export class PostDetailsComponent extends Component {
     if (this.props.postDeleteError) {
       Alert.alert('Error in post delete.');
     } else {
-      await this.props.fetchPostsList(this.state.postObject.userId);
+      EventEmitter.emit('onUpdateList');
       this.props.navigation.navigate('PostListComponent');
     }
   }
@@ -221,7 +219,7 @@ export class PostDetailsComponent extends Component {
               backgroundColor: '#356B8C',
               marginRight: 10,
             }}>
-            <TouchableOpacity onPress={this.onDelete}>
+            <TouchableOpacity onPress={() => this.onDelete()}>
               <Text style={{textAlign: 'center', marginTop: 8, color: 'white'}}>
                 Delete
               </Text>

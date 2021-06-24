@@ -43,11 +43,10 @@ const PostsReducers = (state = initialState, action) => {
       };
       return state;
     case ADD_POST_SUCCESSFULL:
-      state = {
+      return {
         ...state,
-        addPostError: false,
+        postListData: [action.addPostData, ...state.postListData],
       };
-      return state;
     case ADD_POST_FAILURE:
       state = {
         ...state,
@@ -57,12 +56,13 @@ const PostsReducers = (state = initialState, action) => {
       return state;
 
     case POST_DELETE_SUCCESSFULL:
-      state = {
+      const filteredList = state.postListData.filter(
+        post => post.id !== action.postDeleteData.id,
+      );
+      return {
         ...state,
-        postDeleteData: action.postDeleteData,
-        postDeleteError: false,
+        postListData: filteredList,
       };
-      return state;
     case POST_DELETE_FAILURE:
       state = {
         ...state,
@@ -71,12 +71,21 @@ const PostsReducers = (state = initialState, action) => {
       };
       return state;
     case POST_UPDATE_SUCCESSFULL:
-      state = {
+      const index = state.postListData.findIndex(
+        post => post.id === action.postUpdateData.id,
+      );
+      const newArray = [...state.postListData];
+      console.log('Index to update : ', newArray[index]);
+      newArray[index].title = action.postUpdateData.title;
+      console.log('Old title : ', newArray[index].title);
+      console.log('New title : ', action.postUpdateData.title);
+      newArray[index].body = action.postUpdateData.body;
+      console.log('Old body : ', newArray[index].body);
+      console.log('New body : ', action.postUpdateData.body);
+      return {
         ...state,
-        postUpdateData: action.postUpdateData,
-        postUpdateError: false,
+        postListData: newArray,
       };
-      return state;
     case POST_UPDATE_FAILURE:
       state = {
         ...state,

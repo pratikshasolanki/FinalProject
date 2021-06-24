@@ -15,6 +15,7 @@ import LoadingView from '../reusable/LoadingView';
 import TextFieldView from '../reusable/TextFieldView';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as PostsActions from '../../actions/PostsActions';
+import {EventEmitter} from './../../common/EventEmitter';
 
 export class PostListComponent extends Component {
   constructor(props) {
@@ -23,7 +24,9 @@ export class PostListComponent extends Component {
       modalVisible: false,
       postName: '',
       postDetail: '',
+      postList: this.props.navigation.getParam('postList'),
     };
+    console.log('Post list  -> ', this.state.postList);
     this.userId = this.props.navigation.getParam('userId');
   }
   static navigationOptions = ({navigation}) => {
@@ -52,10 +55,14 @@ export class PostListComponent extends Component {
     };
   };
   async componentDidMount() {
-    this.fetchPosts();
+    // this.fetchPosts();
     this.props.navigation.setParams({
       onBackPress: this.onBackPress,
       onAddIcon: this.onAddIcon,
+    });
+    EventEmitter.on('onUpdateList', val => {
+      console.log('***** ==> onUpdateList called ^^^');
+      this.updatePostList();
     });
   }
   onBackPress = () => {
@@ -71,13 +78,6 @@ export class PostListComponent extends Component {
     this.setModalVisible(true);
   }
 
-  fetchPosts = async () => {
-    await this.props.fetchPostsList(this.props.navigation.getParam('userId'));
-    if (this.props.postListError) {
-      console.log('Post', this.props.postListErrorData);
-      Alert.alert(this.props.postListErrorData);
-    }
-  };
   renderItem(item) {
     return (
       <View style={{flexDirection: 'row', marginBottom: 10, marginTop: 10}}>
@@ -154,18 +154,35 @@ export class PostListComponent extends Component {
   }
 
   async onAddPost() {
+    const postId = this.props.postListData[this.props.postListData.length - 1]
+      .id;
     await this.props.addPost(
       this.userId,
       this.state.postDetail,
       this.state.postName,
+      postId,
     );
     if (this.props.addPostError) {
       console.log('Add post error ', this.props.addPostErrorData);
       Alert.alert(this.props.addPostErrorData);
     } else {
-      this.fetchPosts();
+      this.updatePostList();
+      // this.fetchPosts();
     }
     this.setModalVisible(!this.state.modalVisible);
+  }
+
+  updatePostList() {
+    console.log('Update post list.');
+    const obj = [];
+    this.props.postListData.map(post => {
+      if (post.userId === this.state.postList[0].userId) {
+        obj.push(post);
+      }
+    });
+    this.setState({
+      postList: obj,
+    });
   }
 
   renderAddPost() {
@@ -224,7 +241,7 @@ export class PostListComponent extends Component {
       <SafeAreaView style={{flex: 1}}>
         <View style={{marginLeft: 10}}>
           <FlatList
-            data={this.props.postListData}
+            data={this.state.postList}
             ItemSeparatorComponent={this.itemSeparatorView}
             renderItem={({item}) => this.renderItem(item)}
             keyExtractor={(item, index) => index.toString()}
@@ -295,6 +312,7 @@ const styles = {
 };
 
 export function mapStateToProps(state, _props) {
+  // console.log('---------->>>     ', state.PostsReducers.postListData);
   return {
     postListData: state.PostsReducers.postListData,
     postListError: state.PostsReducers.postListError,

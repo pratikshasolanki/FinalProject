@@ -24,12 +24,11 @@ export function showLoadingAction(showLoading) {
   };
 }
 
-export function fetchPostsList(userId) {
+export function fetchPostsList() {
   return async dispatch => {
-    console.log('post ->', userId);
+    console.log('Fetch post list ->');
     dispatch(showLoadingAction(true));
-    const url =
-      'https://jsonplaceholder.typicode.com/users/' + userId + '/posts';
+    const url = 'https://jsonplaceholder.typicode.com/posts';
     await fetch(url, {
       method: 'GET',
       headers: {
@@ -71,35 +70,47 @@ export function addPostFailure() {
   };
 }
 
-export function addPost(userId, postDetail, postName) {
+export function addPost(userId, postDetail, postName, postId) {
   return async dispatch => {
-    console.log('post ->', userId);
-    dispatch(showLoadingAction(true));
+    const data = {
+      title: postName,
+      body: postDetail,
+      userId: userId,
+      id: postId + 1,
+    };
+    console.log('[add post] user id ->', data);
+    dispatch(addPostSuccess(data));
+    //   console.log('[add post] user id ->', userId);
+    //   dispatch(showLoadingAction(true));
 
-    await fetch('https://jsonplaceholder.typicode.com/posts', {
-      method: 'POST',
-      body: JSON.stringify({
-        title: postName,
-        body: postDetail,
-        userId: userId,
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-      .then(response => {
-        return response.json();
-      })
-      .then(data => {
-        //
-        console.log('data ->', data);
-        dispatch(showLoadingAction(false));
-        dispatch(addPostSuccess(data));
-      })
-      .catch(error => {
-        dispatch(showLoadingAction(false));
-        dispatch(addPostFailure());
-      });
+    //   let body = JSON.stringify({
+    //     title: postName,
+    //     body: postDetail,
+    //     userId: userId,
+    //   });
+    //   console.log('[add post] body ->', body);
+    //   await fetch('https://jsonplaceholder.typicode.com/posts', {
+    //     method: 'POST',
+    //     headers: {
+    //       Accept: 'application/json',
+    //       'Content-Type': 'application/json; charset=UTF-8',
+    //     },
+    //     body: body,
+    //   })
+    //     .then(response => {
+    //       console.log('response -> ', response);
+    //       return response.json();
+    //     })
+    //     .then(data => {
+    //       //
+    //       console.log('add post data ->', data);
+    //       dispatch(showLoadingAction(false));
+    //       dispatch(addPostSuccess(data));
+    //     })
+    //     .catch(error => {
+    //       dispatch(showLoadingAction(false));
+    //       dispatch(addPostFailure());
+    //     });
   };
 }
 
@@ -123,33 +134,41 @@ export function postUpdateFailure() {
 
 export function onUpdatePost(userId, id, postDetail, postName) {
   return async dispatch => {
-    console.log('post ->', userId);
-    dispatch(showLoadingAction(true));
-    await fetch('https://jsonplaceholder.typicode.com/posts', {
-      method: 'PUT',
-      body: JSON.stringify({
-        id: id,
-        title: postName,
-        body: postDetail,
-        userId: userId,
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-      .then(response => {
-        return response.json();
-      })
-      .then(data => {
-        //
-        console.log('data ->', data);
-        dispatch(showLoadingAction(false));
-        dispatch(postUpdateSuccess(data));
-      })
-      .catch(error => {
-        dispatch(showLoadingAction(false));
-        dispatch(postUpdateFailure());
-      });
+    // console.log('post ->', userId);
+    // dispatch(showLoadingAction(true));
+    // await fetch('https://jsonplaceholder.typicode.com/posts', {
+    //   method: 'PUT',
+    //   body: JSON.stringify({
+    //     id: id,
+    //     title: postName,
+    //     body: postDetail,
+    //     userId: userId,
+    //   }),
+    //   headers: {
+    //     'Content-type': 'application/json; charset=UTF-8',
+    //   },
+    // })
+    //   .then(response => {
+    //     return response.json();
+    //   })
+    //   .then(data => {
+    //     //
+    //     console.log('data ->', data);
+    //     dispatch(showLoadingAction(false));
+    //     dispatch(postUpdateSuccess(data));
+    //   })
+    //   .catch(error => {
+    //     dispatch(showLoadingAction(false));
+    //     dispatch(postUpdateFailure());
+    //   });
+    const data = {
+      title: postName,
+      body: postDetail,
+      userId: userId,
+      id,
+    };
+    console.log('[update post]  ->', data);
+    dispatch(postUpdateSuccess(data));
   };
 }
 
@@ -173,30 +192,36 @@ export function postDeleteFailure() {
 
 export function onDeletePost(userId, id) {
   return async dispatch => {
-    console.log('post ->', userId);
-    dispatch(showLoadingAction(true));
-    await fetch('https://jsonplaceholder.typicode.com/posts', {
-      method: 'DELETE',
-      body: JSON.stringify({
-        id: id,
-        userId: userId,
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-      .then(response => {
-        return response.json();
-      })
-      .then(data => {
-        //
-        console.log('data ->', data);
-        dispatch(showLoadingAction(false));
-        dispatch(postDeleteSuccess(data));
-      })
-      .catch(error => {
-        dispatch(showLoadingAction(false));
-        dispatch(postDeleteFailure());
-      });
+    //   console.log('post ->', userId);
+    //   dispatch(showLoadingAction(true));
+    //   await fetch('https://jsonplaceholder.typicode.com/posts', {
+    //     method: 'DELETE',
+    //     body: JSON.stringify({
+    //       id: id,
+    //       userId: userId,
+    //     }),
+    //     headers: {
+    //       'Content-type': 'application/json; charset=UTF-8',
+    //     },
+    //   })
+    //     .then(response => {
+    //       return response.json();
+    //     })
+    //     .then(data => {
+    //       //
+    //       console.log('data ->', data);
+    //       dispatch(showLoadingAction(false));
+    //       dispatch(postDeleteSuccess(data));
+    //     })
+    //     .catch(error => {
+    //       dispatch(showLoadingAction(false));
+    //       dispatch(postDeleteFailure());
+    //     });
+    const data = {
+      userId: userId,
+      id,
+    };
+    console.log('[delete post]  ->', data);
+    dispatch(postDeleteSuccess(data));
   };
 }

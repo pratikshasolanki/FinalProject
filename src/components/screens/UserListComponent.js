@@ -7,6 +7,7 @@ import {bindActionCreators} from 'redux';
 import * as UserActions from '../../actions/UsersActions';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import LoadingView from '../reusable/LoadingView';
+import * as PostsActions from '../../actions/PostsActions';
 
 export class UserListComponent extends Component {
   constructor() {
@@ -53,10 +54,38 @@ export class UserListComponent extends Component {
           </View>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => {
-            this.props.navigation.navigate('PostListComponent', {
-              userId: item.id,
-            });
+          onPress={async () => {
+            if (this.props.postListData.length === 0) {
+              await this.props.fetchPostsList();
+              if (this.props.postListError) {
+                console.log('Post', this.props.postListErrorData);
+                Alert.alert(this.props.postListErrorData);
+              } else {
+                const obj = [];
+                this.props.postListData.map(post => {
+                  if (post.userId === item.id) {
+                    obj.push(post);
+                  }
+                });
+                console.log('Data1      ', obj);
+                this.props.navigation.navigate('PostListComponent', {
+                  postList: obj,
+                  userId: item.id,
+                });
+              }
+            } else {
+              const obj = [];
+              this.props.postListData.map(post => {
+                if (post.userId === item.id) {
+                  obj.push(post);
+                }
+              });
+              console.log('Data 1     ', obj);
+              this.props.navigation.navigate('PostListComponent', {
+                postList: obj,
+                userId: item.id,
+              });
+            }
           }}>
           <View
             style={{
@@ -124,11 +153,17 @@ export function mapStateToProps(state, _props) {
     userListError: state.UserReducers.userListError,
     userListErrorData: state.UserReducers.userListErrorData,
     showLoading: state.UserReducers.showLoading,
+    postListData: state.PostsReducers.postListData,
+    postListError: state.PostsReducers.postListError,
+    postListErrorData: state.PostsReducers.postListErrorData,
   };
 }
 
 export function mapDispatchToProps(dispatch) {
-  return bindActionCreators(Object.assign({}, UserActions), dispatch);
+  return bindActionCreators(
+    Object.assign({}, UserActions, PostsActions),
+    dispatch,
+  );
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserListComponent);
